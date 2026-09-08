@@ -1,0 +1,132 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #172033;
+  background: #eef1f7;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.workspace {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 64px 0;
+}
+
+.intro {
+  max-width: 700px;
+  margin-bottom: 32px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 12px;
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  line-height: 0.95;
+}
+
+.eyebrow {
+  color: #6d5dfb;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.palette,
+.preview {
+  padding: 28px;
+  border: 1px solid #d8deea;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgb(31 38 53 / 10%);
+}
+
+.palette {
+  margin-bottom: 24px;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.swatch {
+  min-width: 0;
+}
+
+.swatch span {
+  display: block;
+  height: 72px;
+  margin-bottom: 8px;
+  border: 1px solid #d8deea;
+  border-radius: 14px;
+}
+
+.swatch strong,
+.swatch code {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.swatch code {
+  color: #667085;
+  font-size: 0.75rem;
+}
+
+.preview {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--background);
+}
+
+.preview p {
+  color: var(--muted-text);
+}
+
+.preview button {
+  min-height: 44px;
+  padding: 0 18px;
+  color: var(--primary-contrast);
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid #9f8cff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  .workspace {
+    width: min(100% - 20px, 1120px);
+    padding: 32px 0;
+  }
+
+  .palette,
+  .preview {
+    padding: 20px;
+    border-radius: 18px;
+  }
+}
