@@ -114,3 +114,42 @@ describe('editor selection', () => {
     expect(executiveDemoDocument).toEqual(snapshot);
   });
 });
+
+describe('editor viewport state', () => {
+  it('switches presets and maps manual widths without creating history', () => {
+    const store = createEditorStore(
+      executiveDemoDocument,
+      createDefaultRegistry(),
+    );
+    const history = store.getState().history;
+    store.getState().setViewportPreset('mobile');
+    expect(store.getState().viewport).toMatchObject({
+      width: 390,
+      presetId: 'mobile',
+      activeBreakpoint: 'xs',
+    });
+    store.getState().setViewportWidth(1100);
+    expect(store.getState().viewport).toMatchObject({
+      width: 1100,
+      presetId: null,
+      activeBreakpoint: 'md',
+    });
+    expect(store.getState().history).toBe(history);
+    expect(store.getState().canUndo).toBe(false);
+  });
+
+  it('clamps manual viewport and zoom values and calculates Fit', () => {
+    const store = createEditorStore(
+      executiveDemoDocument,
+      createDefaultRegistry(),
+    );
+    store.getState().setViewportWidth(100);
+    store.getState().setZoom(8);
+    expect(store.getState().viewport.width).toBe(320);
+    expect(store.getState().viewport.zoom).toBe(2);
+    store.getState().setViewportPreset('desktop');
+    store.getState().setWorkspaceWidth(1000);
+    store.getState().fitViewport();
+    expect(store.getState().viewport.zoom).toBeCloseTo(0.65);
+  });
+});
