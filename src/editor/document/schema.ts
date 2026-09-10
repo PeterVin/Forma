@@ -5,7 +5,7 @@ import type { JsonValue } from './types';
 export const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
   z.union([
     z.string(),
-    z.number(),
+    z.number().finite(),
     z.boolean(),
     z.null(),
     z.array(JsonValueSchema),
@@ -13,28 +13,25 @@ export const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
   ]),
 );
 
-export const EditorNodeSchema = z
-  .object({
-    id: z.string().min(1),
-    type: z.string().min(1),
-    parentId: z.string().min(1).optional(),
-    children: z.array(z.string().min(1)),
-    props: z.record(z.string(), JsonValueSchema),
-    style: z.object({
-      sx: z.record(z.string(), JsonValueSchema).optional(),
-    }),
-  })
-  .strict();
+export const EditorNodeSchema = z.strictObject({
+  id: z.string().min(1),
+  type: z.string().min(1),
+  parentId: z.string().min(1).optional(),
+  children: z.array(z.string().min(1)),
+  props: z.record(z.string(), JsonValueSchema),
+  style: z.strictObject({
+    sx: z.record(z.string(), JsonValueSchema).optional(),
+  }),
+});
 
 export const PageDocumentSchema = z
-  .object({
+  .strictObject({
     version: z.number().int().positive(),
     id: z.string().min(1),
     name: z.string().min(1),
     rootNodeId: z.string().min(1),
     nodes: z.record(z.string(), EditorNodeSchema),
   })
-  .strict()
   .superRefine((document, context) => {
     const root = document.nodes[document.rootNodeId];
     if (!root) {
