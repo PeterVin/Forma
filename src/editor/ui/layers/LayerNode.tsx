@@ -1,10 +1,15 @@
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import DragIndicatorRoundedIcon from '@mui/icons-material/DragIndicatorRounded';
 import { Box, IconButton, ListItemButton, ListItemText } from '@mui/material';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { useState } from 'react';
 
 import type { EditorNode, PageDocument } from '../../document/types';
 import type { ComponentRegistry } from '../../../registry/ComponentRegistry';
+import { DropIndicator } from '../dnd/DropIndicator';
+import type { DragSource, DroppableNodeData } from '../dnd/types';
+import { useEditorDnd } from '../dnd/useEditorDnd';
 
 interface LayerNodeProps {
   readonly node: EditorNode;
@@ -26,17 +31,57 @@ export function LayerNode({
   const [expanded, setExpanded] = useState(true);
   const hasChildren = node.children.length > 0;
   const label = registry.get(node.type)?.label ?? node.type;
+  const isRoot = node.id === document.rootNodeId;
+  const { dropTarget } = useEditorDnd();
+  const source: DragSource = {
+    kind: 'node',
+    nodeId: node.id,
+    label,
+    surface: 'layers',
+  };
+  const droppableData: DroppableNodeData = {
+    nodeId: node.id,
+    surface: 'layers',
+    canHaveChildren: registry.get(node.type)?.canHaveChildren ?? false,
+  };
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setDraggableRef,
+    setActivatorNodeRef,
+    isDragging,
+  } = useDraggable({
+    id: `layer-node:${node.id}`,
+    data: { source },
+    disabled: isRoot,
+  });
+  const { setNodeRef: setDroppableRef } = useDroppable({
+    id: `layer-drop:${node.id}`,
+    data: { dropTarget: droppableData },
+  });
+  const activeDropPosition =
+    dropTarget?.surface === 'layers' && dropTarget.nodeId === node.id
+      ? dropTarget.position
+      : null;
 
   return (
     <Box role="treeitem" aria-expanded={hasChildren ? expanded : undefined}>
       <Box
+        ref={(element) => {
+          const htmlElement = element instanceof HTMLElement ? element : null;
+          setDraggableRef(htmlElement);
+          setDroppableRef(htmlElement);
+        }}
         sx={{
           display: 'flex',
           alignItems: 'center',
           minHeight: 36,
           pl: 0.5 + depth * 1.5,
+          position: 'relative',
+          opacity: isDragging ? 0.45 : 1,
         }}
       >
+        <DropIndicator position={activeDropPosition} />
         {hasChildren ? (
           <IconButton
             size="small"
@@ -56,6 +101,19 @@ export function LayerNode({
         ) : (
           <Box sx={{ width: 32, flexShrink: 0 }} />
         )}
+        {!isRoot ? (
+          <IconButton
+            ref={setActivatorNodeRef}
+            {...attributes}
+            {...listeners}
+            size="small"
+            aria-label={`Move ${label} layer`}
+            onClick={(event) => event.stopPropagation()}
+            sx={{ mr: 0.25 }}
+          >
+            <DragIndicatorRoundedIcon fontSize="small" />
+          </IconButton>
+        ) : null}
         <ListItemButton
           selected={selectedNodeId === node.id}
           onClick={() => onSelect(node.id)}
