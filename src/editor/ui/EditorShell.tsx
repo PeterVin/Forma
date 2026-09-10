@@ -5,9 +5,10 @@ import type { EditorStore } from '../store/types';
 import { EditorStoreProvider } from '../store/EditorStoreProvider';
 import { useEditorStore } from '../store/useEditorStore';
 import { EditorCanvas } from './canvas/EditorCanvas';
+import { DndProvider } from './dnd/DndProvider';
+import { EditorSidebar } from './EditorSidebar';
 import { EditorToolbar } from './EditorToolbar';
 import { PropertyInspector } from './inspector/PropertyInspector';
-import { LayersPanel } from './layers/LayersPanel';
 
 function EditorWorkspace() {
   const mode = useEditorStore((state) => state.mode);
@@ -75,19 +76,21 @@ function EditorWorkspace() {
         <EditorToolbar />
       </Box>
       {mode === 'editor' ? (
-        <Box
-          sx={{
-            minHeight: 0,
-            display: 'grid',
-            gridTemplateColumns: '240px 1px minmax(0, 1fr) 1px 300px',
-          }}
-        >
-          <LayersPanel />
-          <Divider orientation="vertical" />
-          <EditorCanvas />
-          <Divider orientation="vertical" />
-          <PropertyInspector />
-        </Box>
+        <DndProvider>
+          <Box
+            sx={{
+              minHeight: 0,
+              display: 'grid',
+              gridTemplateColumns: '260px 1px minmax(0, 1fr) 1px 320px',
+            }}
+          >
+            <EditorSidebar />
+            <Divider orientation="vertical" />
+            <EditorCanvas />
+            <Divider orientation="vertical" />
+            <PropertyInspector />
+          </Box>
+        </DndProvider>
       ) : (
         <EditorCanvas />
       )}
