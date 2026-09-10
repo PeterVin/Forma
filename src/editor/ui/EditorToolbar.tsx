@@ -13,6 +13,7 @@ import {
 
 import { useEditorStore } from '../store/useEditorStore';
 import type { EditorMode } from '../store/types';
+import { ViewportControls } from './viewport/ViewportControls';
 
 export function EditorToolbar() {
   const canUndo = useEditorStore((state) => state.canUndo);
@@ -49,6 +50,8 @@ export function EditorToolbar() {
         </Tooltip>
       </Box>
       <Box sx={{ flex: 1 }} />
+      <ViewportControls />
+      <Divider orientation="vertical" flexItem sx={{ my: 1 }} />
       <ToggleButtonGroup
         exclusive
         size="small"

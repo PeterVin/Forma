@@ -31,6 +31,20 @@ describe('drop position calculation', () => {
     expect(calculateDropPosition(25, 0, 100, false)).toBe('before');
     expect(calculateDropPosition(75, 0, 100, false)).toBe('after');
   });
+
+  it('returns identical logical zones at 50%, 100%, and 150% zoom', () => {
+    for (const zoom of [0.5, 1, 1.5]) {
+      expect(calculateDropPosition(10 * zoom, 0, 100 * zoom, true)).toBe(
+        'before',
+      );
+      expect(calculateDropPosition(50 * zoom, 0, 100 * zoom, true)).toBe(
+        'inside',
+      );
+      expect(calculateDropPosition(90 * zoom, 0, 100 * zoom, true)).toBe(
+        'after',
+      );
+    }
+  });
 });
 
 describe('drop intents', () => {

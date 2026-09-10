@@ -19,6 +19,7 @@ function EditorWorkspace() {
   const redo = useEditorStore((state) => state.redo);
   const lastError = useEditorStore((state) => state.lastError);
   const clearError = useEditorStore((state) => state.clearError);
+  const setZoom = useEditorStore((state) => state.setZoom);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
@@ -32,6 +33,11 @@ function EditorWorkspace() {
       }
 
       const mod = event.ctrlKey || event.metaKey;
+      if (mod && event.key === '0') {
+        event.preventDefault();
+        setZoom(1);
+        return;
+      }
       if (mod && event.key.toLowerCase() === 'z') {
         event.preventDefault();
         if (event.shiftKey) redo();
@@ -59,7 +65,15 @@ function EditorWorkspace() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [document.rootNodeId, executeCommand, mode, redo, selectedNodeId, undo]);
+  }, [
+    document.rootNodeId,
+    executeCommand,
+    mode,
+    redo,
+    selectedNodeId,
+    setZoom,
+    undo,
+  ]);
 
   return (
     <Box

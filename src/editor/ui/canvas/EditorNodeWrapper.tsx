@@ -38,6 +38,7 @@ export function EditorNodeWrapper({
 }: EditorNodeWrapperProps) {
   const selected = useEditorStore((state) => state.selectedNodeId === nodeId);
   const selectNode = useEditorStore((state) => state.selectNode);
+  const zoom = useEditorStore((state) => state.viewport.zoom);
   const { dropTarget } = useEditorDnd();
   const wrapperRef = useRef<HTMLSpanElement | null>(null);
   const [hovered, setHovered] = useState(false);
@@ -173,24 +174,26 @@ export function EditorNodeWrapper({
         sx={{
           display: 'contents',
           '& > :first-of-type': {
-            outline: selected ? '2px solid' : '1px solid transparent',
+            outline: selected
+              ? `${2 / zoom}px solid`
+              : `${1 / zoom}px solid transparent`,
             outlineColor: selected ? 'primary.main' : 'transparent',
-            outlineOffset: selected ? '2px' : '1px',
+            outlineOffset: selected ? `${2 / zoom}px` : `${1 / zoom}px`,
             transition: 'outline-color 100ms ease, box-shadow 100ms ease',
           },
           '&:hover > :first-of-type': {
             outlineColor: selected ? 'primary.main' : 'rgba(49, 90, 125, 0.42)',
           },
           '&[data-drop-position="inside"] > :first-of-type': {
-            outline: '2px dashed',
+            outline: `${2 / zoom}px dashed`,
             outlineColor: 'primary.main',
-            outlineOffset: '-3px',
+            outlineOffset: `${-3 / zoom}px`,
           },
           '&[data-drop-position="before"] > :first-of-type': {
-            boxShadow: '0 -3px 0 #315A7D',
+            boxShadow: `0 ${-3 / zoom}px 0 #315A7D`,
           },
           '&[data-drop-position="after"] > :first-of-type': {
-            boxShadow: '0 3px 0 #315A7D',
+            boxShadow: `0 ${3 / zoom}px 0 #315A7D`,
           },
         }}
       >
