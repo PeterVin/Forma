@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import type { PageDocument } from '../editor/document/types';
-import { createDefaultRegistry } from '../registry/createDeffaultRegistry';
+import { createDefaultRegistry } from '../registry/createDefaultRegistry';
 import { DocumentRenderer } from './DocumentRenderer';
 
 const simpleDocument = {

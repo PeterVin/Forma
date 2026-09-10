@@ -1,7 +1,7 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
 
 import { executiveDemoDocument } from './examples/executiveDemo';
-import { createDefaultRegistry } from './registry/createDeffaultRegistry';
+import { createDefaultRegistry } from './registry/createDefaultRegistry';
 import { DocumentRenderer } from './renderer/DocumentRenderer';
 import { executiveTheme } from './theme/executiveTheme';
 
