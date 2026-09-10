@@ -3,38 +3,35 @@ import { z } from 'zod';
 
 import type { ComponentDefinition } from '../types';
 import { withSx } from './helpers';
+import { looseComponentProps, responsiveProp } from './schemaHelpers';
 
 const responsiveString = (values: readonly [string, ...string[]]) =>
-  z.union([z.enum(values), z.record(z.string(), z.enum(values))]);
+  responsiveProp(z.enum(values));
 
-export const StackPropsSchema = z
-  .object({
-    direction: responsiveString([
-      'row',
-      'row-reverse',
-      'column',
-      'column-reverse',
-    ]).optional(),
-    spacing: z
-      .union([z.number().min(0), z.record(z.string(), z.number().min(0))])
-      .optional(),
-    alignItems: responsiveString([
-      'stretch',
-      'center',
-      'flex-start',
-      'flex-end',
-      'baseline',
-    ]).optional(),
-    justifyContent: responsiveString([
-      'flex-start',
-      'center',
-      'flex-end',
-      'space-between',
-      'space-around',
-      'space-evenly',
-    ]).optional(),
-  })
-  .passthrough();
+export const StackPropsSchema = looseComponentProps({
+  direction: responsiveString([
+    'row',
+    'row-reverse',
+    'column',
+    'column-reverse',
+  ]).optional(),
+  spacing: responsiveProp(z.number().min(0)).optional(),
+  alignItems: responsiveString([
+    'stretch',
+    'center',
+    'flex-start',
+    'flex-end',
+    'baseline',
+  ]).optional(),
+  justifyContent: responsiveString([
+    'flex-start',
+    'center',
+    'flex-end',
+    'space-between',
+    'space-around',
+    'space-evenly',
+  ]).optional(),
+});
 
 export const StackDefinition: ComponentDefinition = {
   type: 'mui.stack',
@@ -50,6 +47,7 @@ export const StackDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'props',
       editor: 'select',
+      responsive: true,
       options: ['row', 'row-reverse', 'column', 'column-reverse'].map(
         (value) => ({
           label: value,
@@ -63,6 +61,7 @@ export const StackDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'props',
       editor: 'number',
+      responsive: true,
     },
     {
       key: 'alignItems',
@@ -70,6 +69,7 @@ export const StackDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'props',
       editor: 'select',
+      responsive: true,
       options: ['stretch', 'center', 'flex-start', 'flex-end', 'baseline'].map(
         (value) => ({ label: value, value }),
       ),
@@ -80,6 +80,7 @@ export const StackDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'props',
       editor: 'select',
+      responsive: true,
       options: [
         'flex-start',
         'center',

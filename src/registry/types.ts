@@ -32,6 +32,7 @@ export interface PropertyDefinition {
   readonly editor: PropertyEditorType;
   readonly options?: readonly PropertyOption[];
   readonly description?: string;
+  readonly responsive?: boolean;
 }
 
 export interface ComponentDefinition {

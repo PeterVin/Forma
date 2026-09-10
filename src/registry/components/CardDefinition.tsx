@@ -16,6 +16,7 @@ export const CardDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'sx',
       editor: 'number',
+      responsive: true,
       description: 'Adds spacing inside the selected card surface.',
     },
   ],

@@ -4,28 +4,27 @@ import { z } from 'zod';
 
 import type { ComponentDefinition } from '../types';
 import { contentProps } from './helpers';
+import { looseComponentProps } from './schemaHelpers';
 
-export const ButtonPropsSchema = z
-  .object({
-    content: z.string().optional(),
-    variant: z.enum(['text', 'outlined', 'contained']).optional(),
-    color: z
-      .enum([
-        'inherit',
-        'primary',
-        'secondary',
-        'success',
-        'error',
-        'info',
-        'warning',
-      ])
-      .optional(),
-    size: z.enum(['small', 'medium', 'large']).optional(),
-    disabled: z.boolean().optional(),
-    fullWidth: z.boolean().optional(),
-    endIcon: z.enum(['arrowForward']).optional(),
-  })
-  .passthrough();
+export const ButtonPropsSchema = looseComponentProps({
+  content: z.string().optional(),
+  variant: z.enum(['text', 'outlined', 'contained']).optional(),
+  color: z
+    .enum([
+      'inherit',
+      'primary',
+      'secondary',
+      'success',
+      'error',
+      'info',
+      'warning',
+    ])
+    .optional(),
+  size: z.enum(['small', 'medium', 'large']).optional(),
+  disabled: z.boolean().optional(),
+  fullWidth: z.boolean().optional(),
+  endIcon: z.enum(['arrowForward']).optional(),
+});
 
 export const ButtonDefinition: ComponentDefinition = {
   type: 'mui.button',

@@ -3,13 +3,12 @@ import { z } from 'zod';
 
 import type { ComponentDefinition } from '../types';
 import { withSx } from './helpers';
+import { looseComponentProps } from './schemaHelpers';
 
-export const PaperPropsSchema = z
-  .object({
-    elevation: z.number().int().min(0).max(24).optional(),
-    variant: z.enum(['elevation', 'outlined']).optional(),
-  })
-  .passthrough();
+export const PaperPropsSchema = looseComponentProps({
+  elevation: z.number().int().min(0).max(24).optional(),
+  variant: z.enum(['elevation', 'outlined']).optional(),
+});
 
 export const PaperDefinition: ComponentDefinition = {
   type: 'mui.paper',
@@ -43,6 +42,7 @@ export const PaperDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'sx',
       editor: 'number',
+      responsive: true,
     },
   ],
   render: (node, children) => (

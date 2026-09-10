@@ -3,15 +3,14 @@ import { z } from 'zod';
 
 import type { ComponentDefinition } from '../types';
 import { withSx } from './helpers';
+import { looseComponentProps } from './schemaHelpers';
 
-export const ContainerPropsSchema = z
-  .object({
-    maxWidth: z
-      .union([z.enum(['xs', 'sm', 'md', 'lg', 'xl']), z.literal(false)])
-      .optional(),
-    disableGutters: z.boolean().optional(),
-  })
-  .passthrough();
+export const ContainerPropsSchema = looseComponentProps({
+  maxWidth: z
+    .union([z.enum(['xs', 'sm', 'md', 'lg', 'xl']), z.literal(false)])
+    .optional(),
+  disableGutters: z.boolean().optional(),
+});
 
 export const ContainerDefinition: ComponentDefinition = {
   type: 'mui.container',
@@ -38,6 +37,14 @@ export const ContainerDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'props',
       editor: 'boolean',
+    },
+    {
+      key: 'padding',
+      label: 'Padding',
+      group: 'layout',
+      target: 'sx',
+      editor: 'number',
+      responsive: true,
     },
   ],
   render: (node, children) => (

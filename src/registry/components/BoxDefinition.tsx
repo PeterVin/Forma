@@ -16,6 +16,7 @@ export const BoxDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'sx',
       editor: 'select',
+      responsive: true,
       options: ['block', 'flex', 'grid', 'inline-flex', 'none'].map(
         (value) => ({
           label: value,
@@ -29,6 +30,7 @@ export const BoxDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'sx',
       editor: 'text',
+      responsive: true,
     },
     {
       key: 'height',
@@ -36,6 +38,7 @@ export const BoxDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'sx',
       editor: 'text',
+      responsive: true,
     },
     {
       key: 'padding',
@@ -43,6 +46,7 @@ export const BoxDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'sx',
       editor: 'number',
+      responsive: true,
     },
     {
       key: 'margin',
@@ -50,6 +54,7 @@ export const BoxDefinition: ComponentDefinition = {
       group: 'layout',
       target: 'sx',
       editor: 'number',
+      responsive: true,
     },
   ],
   render: (node, children) => (

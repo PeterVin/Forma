@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { ComponentRegistry } from './ComponentRegistry';
 import { ButtonDefinition } from './components/ButtonDefinition';
+import { ButtonPropsSchema } from './components/ButtonDefinition';
 import { BoxDefinition } from './components/BoxDefinition';
+import { StackPropsSchema } from './components/StackDefinition';
 import { createDefaultRegistry } from './createDefaultRegistry';
 import { validateNodeProps } from './validation';
 
@@ -44,5 +46,33 @@ describe('ComponentRegistry', () => {
       registry,
     );
     expect(result.success).toBe(false);
+  });
+
+  it('uses Zod 4 loose objects to preserve unknown MUI props', () => {
+    const parsed = ButtonPropsSchema.parse({
+      content: 'Save',
+      variant: 'contained',
+      'data-testid': 'save-action',
+      disableElevation: true,
+    });
+    expect(parsed['data-testid']).toBe('save-action');
+    expect(parsed.disableElevation).toBe(true);
+  });
+
+  it('rejects invalid known props and invalid nested responsive entries', () => {
+    expect(ButtonPropsSchema.safeParse({ variant: 'invalid' }).success).toBe(
+      false,
+    );
+    expect(
+      StackPropsSchema.safeParse({
+        direction: { xs: 'column', md: 'sideways' },
+      }).success,
+    ).toBe(false);
+    expect(
+      StackPropsSchema.safeParse({
+        spacing: { xs: 1, md: 2 },
+        futureMuiProp: { nested: true },
+      }).success,
+    ).toBe(true);
   });
 });
