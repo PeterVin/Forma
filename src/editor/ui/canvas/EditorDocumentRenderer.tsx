@@ -42,7 +42,12 @@ function EditorTreeNode({ nodeId }: EditorTreeNodeProps) {
   };
 
   return (
-    <EditorNodeWrapper nodeId={node.id}>
+    <EditorNodeWrapper
+      nodeId={node.id}
+      label={definition.label}
+      canHaveChildren={definition.canHaveChildren}
+      isRoot={node.id === document.rootNodeId}
+    >
       <Fragment>{definition.render(nodeWithDefaults, children)}</Fragment>
     </EditorNodeWrapper>
   );
