@@ -42,6 +42,21 @@ describe('immutable node operations', () => {
     expect(executiveDemoDocument).toEqual(snapshot);
   });
 
+  it('removes patched properties when their update value is undefined', () => {
+    const result = updateNodeSx(executiveDemoDocument, 'root', {
+      py: undefined,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.value.nodes.root.style.sx?.py).toBeUndefined();
+      expect(result.value.nodes.root.style.sx?.px).toEqual({
+        xs: 2,
+        sm: 3,
+        lg: 4,
+      });
+    }
+  });
+
   it('adds a node, assigns its parent, and rejects invalid parents', () => {
     const definition = registry.get('mui.box')!;
     const node = createNodeFromDefinition(definition, { id: 'new-box' });

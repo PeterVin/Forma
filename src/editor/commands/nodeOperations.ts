@@ -1,7 +1,7 @@
 import type { ComponentRegistry } from '../../registry/ComponentRegistry';
 import { validateDocument } from '../document/validation';
 import type { EditorNode, JsonObject, PageDocument } from '../document/types';
-import type { OperationResult } from './types';
+import type { OperationResult, PropertyPatch } from './types';
 
 function failure(
   code: Parameters<typeof operationError>[0],
@@ -87,6 +87,18 @@ function canAcceptChildren(
   return { success: true, value: parent };
 }
 
+function applyPropertyPatch(
+  current: JsonObject,
+  patch: PropertyPatch,
+): JsonObject {
+  const next: Record<string, JsonObject[string]> = { ...current };
+  for (const [key, value] of Object.entries(patch)) {
+    if (value === undefined) delete next[key];
+    else next[key] = value;
+  }
+  return next;
+}
+
 function collectSubtree(
   document: PageDocument,
   nodeId: string,
@@ -114,16 +126,14 @@ function createUniqueCopyId(originalId: string, usedIds: Set<string>): string {
 export function updateNodeProps(
   document: PageDocument,
   nodeId: string,
-  patch: JsonObject,
+  patch: PropertyPatch,
 ): OperationResult<PageDocument> {
   const node = document.nodes[nodeId];
   if (!node)
     return failure('node_not_found', `Node "${nodeId}" does not exist.`);
 
-  const nextProps = { ...node.props, ...patch };
-  if (
-    Object.entries(patch).every(([key, value]) => node.props[key] === value)
-  ) {
+  const nextProps = applyPropertyPatch(node.props, patch);
+  if (JSON.stringify(nextProps) === JSON.stringify(node.props)) {
     return { success: true, value: document };
   }
 
@@ -133,21 +143,22 @@ export function updateNodeProps(
 export function updateNodeSx(
   document: PageDocument,
   nodeId: string,
-  patch: JsonObject,
+  patch: PropertyPatch,
 ): OperationResult<PageDocument> {
   const node = document.nodes[nodeId];
   if (!node)
     return failure('node_not_found', `Node "${nodeId}" does not exist.`);
 
   const currentSx = node.style.sx ?? {};
-  if (Object.entries(patch).every(([key, value]) => currentSx[key] === value)) {
+  const nextSx = applyPropertyPatch(currentSx, patch);
+  if (JSON.stringify(nextSx) === JSON.stringify(currentSx)) {
     return { success: true, value: document };
   }
 
   return finish(
     replaceNode(document, nodeId, {
       ...node,
-      style: { ...node.style, sx: { ...currentSx, ...patch } },
+      style: { ...node.style, sx: nextSx },
     }),
   );
 }

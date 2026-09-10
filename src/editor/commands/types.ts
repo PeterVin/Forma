@@ -1,15 +1,19 @@
-import type { EditorNode, JsonObject } from '../document/types';
+import type { EditorNode, JsonObject, JsonValue } from '../document/types';
+
+export interface PropertyPatch {
+  readonly [key: string]: JsonValue | undefined;
+}
 
 export type EditorCommand =
   | {
       readonly type: 'node.updateProps';
       readonly nodeId: string;
-      readonly patch: JsonObject;
+      readonly patch: PropertyPatch;
     }
   | {
       readonly type: 'node.updateSx';
       readonly nodeId: string;
-      readonly patch: JsonObject;
+      readonly patch: PropertyPatch;
     }
   | {
       readonly type: 'node.replaceProps';
