@@ -9,6 +9,7 @@ import {
   useDocumentContext,
 } from '../../../renderer/DocumentContext';
 import { UnknownComponent } from '../../../renderer/UnknownComponent';
+import { EmptyContainerDropZone } from './EmptyContainerDropZone';
 import { EditorNodeWrapper } from './EditorNodeWrapper';
 
 interface EditorTreeNodeProps {
@@ -25,11 +26,15 @@ function EditorTreeNode({ nodeId }: EditorTreeNodeProps) {
     return <UnknownComponent type={node.type} nodeId={node.id} />;
 
   const children = definition.canHaveChildren ? (
-    <>
-      {node.children.map((childId) => (
-        <EditorTreeNode key={childId} nodeId={childId} />
-      ))}
-    </>
+    node.children.length > 0 ? (
+      <>
+        {node.children.map((childId) => (
+          <EditorTreeNode key={childId} nodeId={childId} />
+        ))}
+      </>
+    ) : (
+      <EmptyContainerDropZone />
+    )
   ) : null;
   const nodeWithDefaults = {
     ...node,
