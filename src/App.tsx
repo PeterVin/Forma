@@ -1,20 +1,16 @@
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { lazy, Suspense } from 'react';
 
-import { createEditorStore } from './editor/store/createEditorStore';
-import { EditorShell } from './editor/ui/EditorShell';
-import { executiveDemoDocument } from './examples/executiveDemo';
-import { createDefaultRegistry } from './registry/createDefaultRegistry';
-import { executiveTheme } from './theme/executiveTheme';
-
-const registry = createDefaultRegistry();
-const editorStore = createEditorStore(executiveDemoDocument, registry);
+const EditorApplication = lazy(() => import('./editor/EditorApplication'));
 
 function App() {
   return (
-    <ThemeProvider theme={executiveTheme}>
-      <CssBaseline />
-      <EditorShell store={editorStore} />
-    </ThemeProvider>
+    <Suspense
+      fallback={
+        <div className="app-loading">Prepare Forma Theme Studio...</div>
+      }
+    >
+      <EditorApplication />
+    </Suspense>
   );
 }
 
