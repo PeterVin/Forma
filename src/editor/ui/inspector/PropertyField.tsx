@@ -3,6 +3,7 @@ import {
   FormControlLabel,
   FormHelperText,
   InputLabel,
+  MenuItem,
   Select,
   Switch,
   TextField,
@@ -52,20 +53,19 @@ export function PropertyField({
   }
 
   if (definition.editor === 'select') {
+    const labelId = `${fieldId}-label`;
     const selectValue =
       value === null || ['string', 'number', 'boolean'].includes(typeof value)
         ? String(value ?? '')
         : '';
     return (
       <FormControl fullWidth size="small">
-        <InputLabel shrink htmlFor={fieldId}>
-          {definition.label}
-        </InputLabel>
+        <InputLabel id={labelId}>{definition.label}</InputLabel>
         <Select
-          native
+          labelId={labelId}
+          id={fieldId}
           value={selectValue}
           label={definition.label}
-          inputProps={{ id: fieldId, 'aria-label': definition.label }}
           onChange={(event) => {
             const option = definition.options?.find(
               (candidate) => String(candidate.value) === event.target.value,
@@ -73,13 +73,13 @@ export function PropertyField({
             if (option) onCommit(option.value);
           }}
         >
-          <option value="">
+          <MenuItem value="" disabled>
             {typeof value === 'object' ? 'Responsive value' : 'Select…'}
-          </option>
+          </MenuItem>
           {definition.options?.map((option) => (
-            <option key={String(option.value)} value={String(option.value)}>
+            <MenuItem key={String(option.value)} value={String(option.value)}>
               {option.label}
-            </option>
+            </MenuItem>
           ))}
         </Select>
         {definition.description ? (
