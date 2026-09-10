@@ -1,5 +1,6 @@
 import type { ComponentRegistry } from '../../../registry/ComponentRegistry';
 import type { PageDocument } from '../../document/types';
+import { validatePlacement } from '../../constraints/validatePlacement';
 import type {
   DragSource,
   DropIntentResult,
@@ -125,14 +126,74 @@ export function resolveDropIntent(
     }
   }
 
+  const sourceType =
+    source.kind === 'palette'
+      ? source.componentType
+      : document.nodes[source.nodeId]?.type;
+  if (!sourceType)
+    return { success: false, message: 'Dragged component no longer exists.' };
+  const placement = validatePlacement({
+    document,
+    registry,
+    nodeType: sourceType,
+    nodeId: source.kind === 'node' ? source.nodeId : undefined,
+    parentId: targetParentId,
+  });
+  if (!placement.success) {
+    return { success: false, message: placement.message };
+  }
+
   return { success: true, intent: { source, targetParentId, index } };
+}
+
+export type ClickAddPlacement =
+  | { readonly success: true; readonly parentId: string }
+  | { readonly success: false; readonly message: string };
+
+export function resolveClickAddPlacement(
+  document: PageDocument,
+  registry: ComponentRegistry,
+  selectedNodeId: string | null,
+  componentType: string,
+): ClickAddPlacement {
+  const selected = selectedNodeId ? document.nodes[selectedNodeId] : undefined;
+  const candidateIds = [
+    selected?.id,
+    selected?.parentId,
+    document.rootNodeId,
+  ].filter(
+    (candidate, index, all): candidate is string =>
+      Boolean(candidate) && all.indexOf(candidate) === index,
+  );
+  let message = 'Select a compatible container before adding this component.';
+  for (const parentId of candidateIds) {
+    const result = validatePlacement({
+      document,
+      registry,
+      nodeType: componentType,
+      parentId,
+    });
+    if (result.success) return { success: true, parentId };
+    message = result.message;
+  }
+  return { success: false, message };
 }
 
 export function resolveClickAddParent(
   document: PageDocument,
   registry: ComponentRegistry,
   selectedNodeId: string | null,
+  componentType?: string,
 ): string | null {
+  if (componentType) {
+    const result = resolveClickAddPlacement(
+      document,
+      registry,
+      selectedNodeId,
+      componentType,
+    );
+    return result.success ? result.parentId : null;
+  }
   const selected = selectedNodeId ? document.nodes[selectedNodeId] : undefined;
   if (selected && registry.get(selected.type)?.canHaveChildren)
     return selected.id;

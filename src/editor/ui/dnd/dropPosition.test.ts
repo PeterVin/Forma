@@ -130,6 +130,27 @@ describe('drop intents', () => {
     expect(cases.every((result) => !result.success)).toBe(true);
   });
 
+  it('rejects constrained palette and canvas drops before commands run', () => {
+    const paletteResult = resolveDropIntent(
+      executiveDemoDocument,
+      registry,
+      {
+        kind: 'palette',
+        componentType: 'mui.cardContent',
+        label: 'Card content',
+      },
+      target('page-stack', 'inside'),
+    );
+    const moveResult = resolveDropIntent(
+      executiveDemoDocument,
+      registry,
+      nodeSource('revenue-content'),
+      target('page-stack', 'inside'),
+    );
+    expect(paletteResult.success).toBe(false);
+    expect(moveResult.success).toBe(false);
+  });
+
   it('does not create history when a drag is cancelled before a command', () => {
     const store = createEditorStore(executiveDemoDocument, registry);
     const history = store.getState().history;

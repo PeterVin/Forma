@@ -81,6 +81,34 @@ describe('immutable node operations', () => {
     ).toBe(false);
   });
 
+  it('enforces Card content placement for direct commands', () => {
+    const definition = registry.get('mui.cardContent')!;
+    const node = createNodeFromDefinition(definition, {
+      id: 'new-card-content',
+    });
+    const rejected = addNode(
+      executiveDemoDocument,
+      'page-stack',
+      node,
+      registry,
+    );
+    expect(rejected.success).toBe(false);
+    if (!rejected.success) {
+      expect(rejected.error.message).toContain('only be added inside Card');
+    }
+
+    const moved = moveNode(
+      executiveDemoDocument,
+      'revenue-content',
+      'page-stack',
+      registry,
+    );
+    expect(moved.success).toBe(false);
+    expect(executiveDemoDocument.nodes['revenue-content'].parentId).toBe(
+      'revenue-card',
+    );
+  });
+
   it('removes a complete subtree and protects the root', () => {
     const result = removeNode(executiveDemoDocument, 'revenue-card');
 

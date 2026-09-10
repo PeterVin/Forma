@@ -11,7 +11,7 @@ import { useMemo, useState } from 'react';
 import { createNodeFromDefinition } from '../../../registry/createNodeFromDefinition';
 import type { ComponentDefinition } from '../../../registry/types';
 import { useEditorStore } from '../../store/useEditorStore';
-import { resolveClickAddParent } from '../dnd/dropPosition';
+import { resolveClickAddPlacement } from '../dnd/dropPosition';
 import { ComponentCategory } from './ComponentCategory';
 
 const categoryOrder = ['Layout', 'Surface', 'Content', 'Inputs'] as const;
@@ -57,13 +57,18 @@ export function ComponentPalette() {
   }, [query, registry]);
 
   const addComponent = (definition: ComponentDefinition): void => {
-    const parentId = resolveClickAddParent(document, registry, selectedNodeId);
-    if (!parentId) {
-      reportError('Select a container before adding this component.');
+    const placement = resolveClickAddPlacement(
+      document,
+      registry,
+      selectedNodeId,
+      definition.type,
+    );
+    if (!placement.success) {
+      reportError(placement.message);
       return;
     }
     const node = createNodeFromDefinition(definition);
-    executeCommand({ type: 'node.add', parentId, node });
+    executeCommand({ type: 'node.add', parentId: placement.parentId, node });
     selectNode(node.id);
   };
 

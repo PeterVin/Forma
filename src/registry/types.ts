@@ -6,6 +6,7 @@ import type {
   JsonObject,
   JsonPrimitive,
 } from '../editor/document/types';
+import type { ComponentConstraints } from '../editor/constraints/types';
 
 export type PropertyEditorType =
   | 'text'
@@ -47,8 +48,7 @@ export interface ComponentDefinition {
     readonly hidden?: boolean;
     readonly order?: number;
   };
-  readonly allowedParents?: readonly string[];
-  readonly allowedChildren?: readonly string[];
+  readonly constraints?: ComponentConstraints;
   readonly propSchema?: ZodType;
   readonly inspector?: readonly PropertyDefinition[];
   readonly render: (node: EditorNode, children: ReactNode) => ReactNode;

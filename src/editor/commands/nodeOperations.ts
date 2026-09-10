@@ -1,4 +1,5 @@
 import type { ComponentRegistry } from '../../registry/ComponentRegistry';
+import { validatePlacement } from '../constraints/validatePlacement';
 import { validateDocument } from '../document/validation';
 import type { EditorNode, JsonObject, PageDocument } from '../document/types';
 import type { OperationResult, PropertyPatch } from './types';
@@ -59,32 +60,6 @@ function insertAt(
       ? children.length
       : Math.max(0, Math.min(index, children.length));
   return [...children.slice(0, target), childId, ...children.slice(target)];
-}
-
-function canAcceptChildren(
-  parent: EditorNode,
-  registry: ComponentRegistry,
-): OperationResult<EditorNode> {
-  const definition = registry.get(parent.type);
-  if (!definition) {
-    return {
-      success: false,
-      error: operationError(
-        'unknown_component',
-        `Cannot edit children of unknown component "${parent.type}".`,
-      ),
-    };
-  }
-  if (!definition.canHaveChildren) {
-    return {
-      success: false,
-      error: operationError(
-        'invalid_parent',
-        `${definition.label} components cannot contain children.`,
-      ),
-    };
-  }
-  return { success: true, value: parent };
 }
 
 function applyPropertyPatch(
@@ -204,8 +179,13 @@ export function addNode(
     );
   }
 
-  const parentCheck = canAcceptChildren(parent, registry);
-  if (!parentCheck.success) return parentCheck;
+  const placement = validatePlacement({
+    document,
+    registry,
+    nodeType: node.type,
+    parentId,
+  });
+  if (!placement.success) return failure('invalid_parent', placement.message);
 
   const child = { ...node, parentId };
   const nextParent = {
@@ -273,21 +253,14 @@ export function moveNode(
       'parent_not_found',
       `Parent "${newParentId}" does not exist.`,
     );
-  if (nodeId === newParentId) {
-    return failure(
-      'invalid_parent',
-      'A component cannot be moved into itself.',
-    );
-  }
-  if (collectSubtree(document, nodeId).includes(newParentId)) {
-    return failure(
-      'invalid_parent',
-      'A component cannot be moved into its own descendant.',
-    );
-  }
-
-  const parentCheck = canAcceptChildren(newParent, registry);
-  if (!parentCheck.success) return parentCheck;
+  const placement = validatePlacement({
+    document,
+    registry,
+    nodeType: node.type,
+    nodeId,
+    parentId: newParentId,
+  });
+  if (!placement.success) return failure('invalid_parent', placement.message);
 
   const oldChildren = oldParent.children.filter(
     (childId) => childId !== nodeId,

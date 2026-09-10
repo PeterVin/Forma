@@ -8,6 +8,7 @@ export const CardContentDefinition: ComponentDefinition = {
   label: 'Card content',
   category: 'Surface',
   canHaveChildren: true,
+  constraints: { allowedParents: ['mui.card'] },
   defaultProps: {},
   render: (node, children) => (
     <CardContent {...(withSx(node) as unknown as CardContentProps)}>
