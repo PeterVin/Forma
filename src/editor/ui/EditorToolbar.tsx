@@ -2,7 +2,6 @@ import RedoRoundedIcon from '@mui/icons-material/RedoRounded';
 import UndoRoundedIcon from '@mui/icons-material/UndoRounded';
 import {
   Box,
-  Button,
   Divider,
   IconButton,
   ToggleButton,
@@ -66,14 +65,6 @@ export function EditorToolbar() {
           Preview
         </ToggleButton>
       </ToggleButtonGroup>
-      <Button
-        size="small"
-        variant="text"
-        onClick={() => setMode(mode === 'editor' ? 'preview' : 'editor')}
-        sx={{ display: { xs: 'none', lg: 'inline-flex' } }}
-      >
-        {mode === 'editor' ? 'Open preview' : 'Back to editor'}
-      </Button>
     </Toolbar>
   );
 }
