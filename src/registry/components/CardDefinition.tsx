@@ -9,6 +9,16 @@ export const CardDefinition: ComponentDefinition = {
   category: 'Surface',
   canHaveChildren: true,
   defaultProps: { variant: 'outlined' },
+  inspector: [
+    {
+      key: 'padding',
+      label: 'Padding',
+      group: 'layout',
+      target: 'sx',
+      editor: 'number',
+      description: 'Adds spacing inside the selected card surface.',
+    },
+  ],
   render: (node, children) => (
     <Card {...(withSx(node) as unknown as CardProps)}>{children}</Card>
   ),

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { ZodType } from 'zod';
 
 import type {
   EditorNode,
@@ -39,5 +40,7 @@ export interface ComponentDefinition {
   readonly category: 'Layout' | 'Surface' | 'Content' | 'Inputs' | string;
   readonly canHaveChildren: boolean;
   readonly defaultProps: JsonObject;
+  readonly propSchema?: ZodType;
+  readonly inspector?: readonly PropertyDefinition[];
   readonly render: (node: EditorNode, children: ReactNode) => ReactNode;
 }
