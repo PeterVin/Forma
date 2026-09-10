@@ -11,7 +11,12 @@ export const executiveDemoDocument = {
       type: 'mui.container',
       children: ['page-stack'],
       props: { maxWidth: 'lg' },
-      style: { sx: { py: { xs: 4, md: 7 } } },
+      style: {
+        sx: {
+          py: { xs: 3, md: 5, lg: 7 },
+          px: { xs: 2, sm: 3, lg: 4 },
+        },
+      },
     },
     'page-stack': {
       id: 'page-stack',
@@ -66,7 +71,10 @@ export const executiveDemoDocument = {
       type: 'mui.stack',
       parentId: 'page-stack',
       children: ['revenue-card', 'margin-card', 'inventory-card'],
-      props: { direction: { xs: 'column', md: 'row' }, spacing: 2.5 },
+      props: {
+        direction: { xs: 'column', md: 'row' },
+        spacing: { xs: 1.5, md: 2.5 },
+      },
       style: { sx: { alignItems: 'stretch' } },
     },
     'revenue-card': {
