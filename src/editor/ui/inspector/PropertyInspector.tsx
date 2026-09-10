@@ -1,10 +1,26 @@
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import { Alert, Box, Button, Divider, Stack, Typography } from '@mui/material';
+import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Divider,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 
 import type { JsonValue } from '../../document/types';
 import { useEditorStore } from '../../store/useEditorStore';
 import type { PropertyGroup } from '../../../registry/types';
+import {
+  clearResponsiveOverride,
+  getResponsiveValueInfo,
+  setResponsiveValue,
+} from '../../responsive/responsiveValue';
 import { PropertyField } from './PropertyField';
 
 const groupOrder: readonly PropertyGroup[] = [
@@ -27,6 +43,9 @@ export function PropertyInspector() {
   const selectedNodeId = useEditorStore((state) => state.selectedNodeId);
   const executeCommand = useEditorStore((state) => state.executeCommand);
   const lastError = useEditorStore((state) => state.lastError);
+  const activeBreakpoint = useEditorStore(
+    (state) => state.viewport.activeBreakpoint,
+  );
   const node = selectedNodeId ? document.nodes[selectedNodeId] : undefined;
   const definition = node ? registry.get(node.type) : undefined;
 
@@ -77,26 +96,105 @@ export function PropertyInspector() {
                 {groupLabels[group]}
               </Typography>
               {properties.map((property) => {
-                const value =
+                const rawValue =
                   property.target === 'props'
                     ? node.props[property.key]
                     : node.style.sx?.[property.key];
+                const responsiveInfo = property.responsive
+                  ? getResponsiveValueInfo(rawValue, activeBreakpoint)
+                  : null;
+                const value = property.responsive
+                  ? responsiveInfo?.value
+                  : rawValue;
+                const commitValue = (nextValue: JsonValue): void => {
+                  const storedValue = property.responsive
+                    ? setResponsiveValue(rawValue, activeBreakpoint, nextValue)
+                    : nextValue;
+                  executeCommand({
+                    type:
+                      property.target === 'props'
+                        ? 'node.updateProps'
+                        : 'node.updateSx',
+                    nodeId: node.id,
+                    patch: { [property.key]: storedValue },
+                  });
+                };
+                const clearOverride = (): void => {
+                  const nextValue = clearResponsiveOverride(
+                    rawValue,
+                    activeBreakpoint,
+                  );
+                  if (nextValue === undefined) {
+                    executeCommand({
+                      type:
+                        property.target === 'props'
+                          ? 'node.updateProps'
+                          : 'node.updateSx',
+                      nodeId: node.id,
+                      patch: { [property.key]: undefined },
+                    });
+                    return;
+                  }
+                  executeCommand({
+                    type:
+                      property.target === 'props'
+                        ? 'node.updateProps'
+                        : 'node.updateSx',
+                    nodeId: node.id,
+                    patch: { [property.key]: nextValue },
+                  });
+                };
                 return (
-                  <PropertyField
+                  <Stack
                     key={`${node.id}.${property.target}.${property.key}.${JSON.stringify(value)}`}
-                    definition={property}
-                    value={value as JsonValue | undefined}
-                    onCommit={(nextValue) =>
-                      executeCommand({
-                        type:
-                          property.target === 'props'
-                            ? 'node.updateProps'
-                            : 'node.updateSx',
-                        nodeId: node.id,
-                        patch: { [property.key]: nextValue },
-                      })
-                    }
-                  />
+                    spacing={0.5}
+                  >
+                    {property.responsive ? (
+                      <Stack
+                        direction="row"
+                        spacing={0.75}
+                        sx={{ alignItems: 'center' }}
+                      >
+                        <Chip
+                          size="small"
+                          label={activeBreakpoint}
+                          color={
+                            responsiveInfo?.explicit ? 'primary' : 'default'
+                          }
+                          variant={
+                            responsiveInfo?.explicit ? 'filled' : 'outlined'
+                          }
+                        />
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ flex: 1 }}
+                        >
+                          {responsiveInfo?.explicit
+                            ? 'Override at this breakpoint'
+                            : responsiveInfo?.sourceBreakpoint
+                              ? `Inherited from ${responsiveInfo.sourceBreakpoint}`
+                              : 'Shared value'}
+                        </Typography>
+                        {responsiveInfo?.explicit ? (
+                          <Tooltip title="Clear breakpoint override">
+                            <IconButton
+                              size="small"
+                              aria-label={`Clear ${property.label} ${activeBreakpoint} override`}
+                              onClick={clearOverride}
+                            >
+                              <RestartAltRoundedIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        ) : null}
+                      </Stack>
+                    ) : null}
+                    <PropertyField
+                      definition={property}
+                      value={value as JsonValue | undefined}
+                      onCommit={commitValue}
+                    />
+                  </Stack>
                 );
               })}
             </Stack>

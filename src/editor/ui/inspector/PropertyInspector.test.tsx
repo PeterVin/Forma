@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { executiveDemoDocument } from '../../../examples/executiveDemo';
@@ -43,5 +43,51 @@ describe('PropertyInspector', () => {
     expect(screen.getByRole('button', { name: /View details/ })).toHaveClass(
       'MuiButton-outlined',
     );
+  });
+
+  it('edits responsive overrides at the active breakpoint and supports undo', () => {
+    const store = renderInspector('kpis');
+    const spacing = screen.getByLabelText('Spacing');
+    expect(spacing).toHaveValue(2.5);
+    expect(screen.getAllByText('Inherited from md').length).toBeGreaterThan(0);
+
+    fireEvent.change(spacing, { target: { value: '3' } });
+    fireEvent.blur(spacing);
+    expect(store.getState().history.present.nodes.kpis.props.spacing).toEqual({
+      xs: 1.5,
+      md: 2.5,
+      lg: 3,
+    });
+
+    act(() => store.getState().undo());
+    expect(store.getState().history.present.nodes.kpis.props.spacing).toEqual({
+      xs: 1.5,
+      md: 2.5,
+    });
+
+    act(() => store.getState().setViewportPreset('tablet'));
+    const tabletSpacing = screen.getByLabelText('Spacing');
+    expect(tabletSpacing).toHaveValue(1.5);
+    fireEvent.change(tabletSpacing, { target: { value: '2' } });
+    fireEvent.blur(tabletSpacing);
+    expect(store.getState().history.present.nodes.kpis.props.spacing).toEqual({
+      xs: 1.5,
+      sm: 2,
+      md: 2.5,
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Clear Spacing sm override' }),
+    );
+    expect(store.getState().history.present.nodes.kpis.props.spacing).toEqual({
+      xs: 1.5,
+      md: 2.5,
+    });
+    act(() => store.getState().undo());
+    expect(store.getState().history.present.nodes.kpis.props.spacing).toEqual({
+      xs: 1.5,
+      sm: 2,
+      md: 2.5,
+    });
   });
 });
