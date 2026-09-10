@@ -40,6 +40,14 @@ export interface ComponentDefinition {
   readonly category: 'Layout' | 'Surface' | 'Content' | 'Inputs' | string;
   readonly canHaveChildren: boolean;
   readonly defaultProps: JsonObject;
+  readonly icon?: ReactNode;
+  readonly description?: string;
+  readonly palette?: {
+    readonly hidden?: boolean;
+    readonly order?: number;
+  };
+  readonly allowedParents?: readonly string[];
+  readonly allowedChildren?: readonly string[];
   readonly propSchema?: ZodType;
   readonly inspector?: readonly PropertyDefinition[];
   readonly render: (node: EditorNode, children: ReactNode) => ReactNode;

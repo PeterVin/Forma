@@ -29,4 +29,10 @@ export class ComponentRegistry {
   getAll(): readonly ComponentDefinition[] {
     return [...this.#definitions.values()];
   }
+
+  getByCategory(category: string): readonly ComponentDefinition[] {
+    return this.getAll().filter(
+      (definition) => definition.category === category,
+    );
+  }
 }
