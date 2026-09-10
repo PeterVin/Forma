@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { executiveDemoDocument } from '../../examples/executiveDemo';
@@ -21,5 +21,31 @@ describe('editor UI cleanup', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText('Open preview')).not.toBeInTheDocument();
     expect(screen.queryByText('Back to editor')).not.toBeInTheDocument();
+  });
+
+  it('connects Select to a stable label and outlined notch', () => {
+    const store = createEditorStore(
+      executiveDemoDocument,
+      createDefaultRegistry(),
+    );
+    act(() => store.getState().selectNode('revenue-label'));
+    render(<EditorShell store={store} />);
+
+    const select = screen.getByRole('combobox', { name: 'Variant' });
+    const labelledBy = select.getAttribute('aria-labelledby');
+    expect(select.id).not.toBe('');
+    expect(labelledBy).toContain(`${select.id}-label`);
+    expect(document.getElementById(`${select.id}-label`)).toHaveTextContent(
+      'Variant',
+    );
+    expect(
+      select.closest('.MuiOutlinedInput-root')?.querySelector('legend'),
+    ).toHaveTextContent('Variant');
+
+    fireEvent.mouseDown(select);
+    fireEvent.click(screen.getByRole('option', { name: 'h4' }));
+    expect(
+      store.getState().history.present.nodes['revenue-label'].props.variant,
+    ).toBe('h4');
   });
 });
