@@ -4,10 +4,7 @@ import { Alert, Box, Button, Divider, Stack, Typography } from '@mui/material';
 
 import type { JsonValue } from '../../document/types';
 import { useEditorStore } from '../../store/useEditorStore';
-import type {
-  PropertyDefinition,
-  PropertyGroup,
-} from '../../../registry/types';
+import type { PropertyGroup } from '../../../registry/types';
 import { PropertyField } from './PropertyField';
 
 const groupOrder: readonly PropertyGroup[] = [
@@ -71,7 +68,7 @@ export function PropertyInspector() {
         {lastError ? <Alert severity="error">{lastError}</Alert> : null}
         {groupOrder.map((group) => {
           const properties = definition.inspector?.filter(
-            (property: { group: string }) => property.group === group,
+            (property) => property.group === group,
           );
           if (!properties?.length) return null;
           return (
@@ -79,7 +76,7 @@ export function PropertyInspector() {
               <Typography variant="overline" color="text.secondary">
                 {groupLabels[group]}
               </Typography>
-              {properties.map((property: PropertyDefinition) => {
+              {properties.map((property) => {
                 const value =
                   property.target === 'props'
                     ? node.props[property.key]
