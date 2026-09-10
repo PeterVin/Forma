@@ -48,4 +48,29 @@ describe('editor UI cleanup', () => {
       store.getState().history.present.nodes['revenue-label'].props.variant,
     ).toBe('h4');
   });
+
+  it('handles delete and undo shortcuts without hijacking text inputs', () => {
+    const store = createEditorStore(
+      executiveDemoDocument,
+      createDefaultRegistry(),
+    );
+    store.getState().selectNode('revenue-card');
+    render(<EditorShell store={store} />);
+
+    fireEvent.keyDown(window, { key: 'Delete' });
+    expect(
+      store.getState().history.present.nodes['revenue-card'],
+    ).toBeUndefined();
+    fireEvent.keyDown(window, { key: 'z', ctrlKey: true });
+    expect(
+      store.getState().history.present.nodes['revenue-card'],
+    ).toBeDefined();
+
+    act(() => store.getState().selectNode('revenue-label'));
+    const textInput = screen.getByLabelText('Text');
+    fireEvent.keyDown(textInput, { key: 'Backspace' });
+    expect(
+      store.getState().history.present.nodes['revenue-label'],
+    ).toBeDefined();
+  });
 });
