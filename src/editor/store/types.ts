@@ -20,6 +20,7 @@ export interface EditorStoreState {
   readonly selectNode: (nodeId: string) => void;
   readonly clearSelection: () => void;
   readonly setMode: (mode: EditorMode) => void;
+  readonly reportError: (message: string) => void;
   readonly clearError: () => void;
 }
 

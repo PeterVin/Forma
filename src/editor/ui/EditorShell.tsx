@@ -1,4 +1,4 @@
-import { Box, Divider } from '@mui/material';
+import { Box, Divider, Snackbar } from '@mui/material';
 import { useEffect } from 'react';
 
 import type { EditorStore } from '../store/types';
@@ -16,6 +16,8 @@ function EditorWorkspace() {
   const executeCommand = useEditorStore((state) => state.executeCommand);
   const undo = useEditorStore((state) => state.undo);
   const redo = useEditorStore((state) => state.redo);
+  const lastError = useEditorStore((state) => state.lastError);
+  const clearError = useEditorStore((state) => state.clearError);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
@@ -89,6 +91,12 @@ function EditorWorkspace() {
       ) : (
         <EditorCanvas />
       )}
+      <Snackbar
+        open={Boolean(lastError)}
+        message={lastError}
+        autoHideDuration={4000}
+        onClose={clearError}
+      />
     </Box>
   );
 }

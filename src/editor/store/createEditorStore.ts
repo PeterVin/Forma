@@ -96,6 +96,7 @@ export function createEditorStore(
       })),
     clearSelection: () => set({ selectedNodeId: null }),
     setMode: (mode) => set({ mode }),
+    reportError: (message) => set({ lastError: message }),
     clearError: () => set({ lastError: null }),
   }));
 }
