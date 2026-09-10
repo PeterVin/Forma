@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
 import type { PageDocument } from '../editor/document/types';
-import type { ComponentRegistry } from '../registry/Componentregistry';
+import type { ComponentRegistry } from '../registry/ComponentRegistry';
 
 export interface DocumentContextValue {
   readonly document: PageDocument;

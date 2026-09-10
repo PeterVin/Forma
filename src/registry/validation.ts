@@ -1,5 +1,5 @@
 import type { EditorNode, PageDocument } from '../editor/document/types';
-import type { ComponentRegistry } from './Componentregistry';
+import type { ComponentRegistry } from './ComponentRegistry';
 
 export type ComponentValidationResult =
   | { readonly success: true }

@@ -2,7 +2,7 @@ import { Alert, AlertTitle } from '@mui/material';
 import { Fragment, useMemo } from 'react';
 
 import { validateDocument } from '../../document/validation';
-import type { ComponentRegistry } from '../../../registry/Componentregistry';
+import type { ComponentRegistry } from '../../../registry/ComponentRegistry';
 import { validateDocumentComponents } from '../../../registry/validation';
 import {
   DocumentContext,

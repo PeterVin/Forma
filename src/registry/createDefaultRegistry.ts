@@ -1,4 +1,4 @@
-import { ComponentRegistry } from './Componentregistry';
+import { ComponentRegistry } from './ComponentRegistry';
 import { BoxDefinition } from './components/BoxDefinition';
 import { ButtonDefinition } from './components/ButtonDefinition';
 import { CardContentDefinition } from './components/CardContentDefinition';

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ComponentRegistry } from './Componentregistry';
+import { ComponentRegistry } from './ComponentRegistry';
 import { ButtonDefinition } from './components/ButtonDefinition';
 import { BoxDefinition } from './components/BoxDefinition';
 import { createDefaultRegistry } from './createDefaultRegistry';

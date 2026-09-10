@@ -1,4 +1,4 @@
-import type { ComponentRegistry } from '../../registry/Componentregistry';
+import type { ComponentRegistry } from '../../registry/ComponentRegistry';
 import { validateDocumentComponents } from '../../registry/validation';
 import type { PageDocument } from '../document/types';
 import {

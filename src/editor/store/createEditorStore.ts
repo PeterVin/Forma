@@ -1,6 +1,6 @@
 import { createStore } from 'zustand/vanilla';
 
-import type { ComponentRegistry } from '../../registry/Componentregistry';
+import type { ComponentRegistry } from '../../registry/ComponentRegistry';
 import { executeCommand as runCommand } from '../commands/executeCommand';
 import type { PageDocument } from '../document/types';
 import {

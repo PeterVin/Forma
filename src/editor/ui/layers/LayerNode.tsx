@@ -4,7 +4,7 @@ import { Box, IconButton, ListItemButton, ListItemText } from '@mui/material';
 import { useState } from 'react';
 
 import type { EditorNode, PageDocument } from '../../document/types';
-import type { ComponentRegistry } from '../../../registry/Componentregistry';
+import type { ComponentRegistry } from '../../../registry/ComponentRegistry';
 
 interface LayerNodeProps {
   readonly node: EditorNode;

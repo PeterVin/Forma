@@ -1,6 +1,6 @@
 import type { StoreApi } from 'zustand';
 
-import type { ComponentRegistry } from '../../registry/Componentregistry';
+import type { ComponentRegistry } from '../../registry/ComponentRegistry';
 import type { EditorCommand } from '../commands/types';
 import type { EditorHistory } from './history';
 
